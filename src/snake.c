@@ -4,6 +4,37 @@
 #include "snake_utils.h"
 #include "state.h"
 
+// Task 1: Creating the default_state function 
+
+game_state_t* create_default_state(){
+    // Allocating memory for the game state
+    game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
+
+    // Creating the board
+    state->num_of_rows = 18;
+    state->board = (char**) malloc(state->num_of_rows * sizeof(char*));
+
+    for (int i = 0; i < stat->num_of_rows; i++){
+        state->board[i] = (char*) malloc(21 * sizeof(char));
+        strcpy(state->board[i], "####################");
+    }
+
+    strcpy(state->board[2], "# d>D     *            #");
+
+    state->num_snakes = 1;
+    state->snakes = (snake_t*) malloc(sizeof(snake_t));
+
+    //setting the snake's head and tail postions 
+    state->snakes[0].tail_row = 2;
+    state->snakes[0].tail_col = 2;
+    state->snakes[0].head_row = 2;
+    state->snakes[0].head_col = 4;
+    state->snakes[0].live = true;
+
+    return state;
+
+}
+
 int main(int argc, char *argv[]) {
   bool io_stdin = false;
   char *in_filename = NULL;
