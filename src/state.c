@@ -62,12 +62,12 @@ void free_state(game_state_t *state) {
       free(state->board[i]);
   }
   // freeing the board
-  free(state->board)
+  free(state->board);
   // freeing the snakes array
-  free(state->snakes)
+  free(state->snakes);
 
   //freeing the game_state_struct
-  free(state)
+  free(state);
 
   return;
 }
@@ -75,7 +75,6 @@ void free_state(game_state_t *state) {
 /* Task 3 */
 void print_board(game_state_t *state, FILE *fp) {
   // TODO: Implement this function.
-  void print_board(game_state_t* state, FILE* fp){
       for(int i = 0; i <state-> num_rows; i++){
           fprintf(fp, "%s\n", state->board[i]);
     }
@@ -138,11 +137,11 @@ static bool is_head(char c) {
   // TODO: Implement this function.
   if(c == 'W'){
       return true;
-  } else if (c == "A"){
+  } else if (c == 'A'){
       return true;
-  } else if (c == "S"){
+  } else if (c == 'S'){
       return true;
-  } else if (c == "D"){
+  } else if (c == 'D'){
       return true;
     }else {
         return false;
@@ -264,7 +263,7 @@ static void update_head(game_state_t *state, unsigned int snum) {
 /*
   Task 4.4
 
-  Helper function for update_state. Update the tail...
+  Helper function for update_state. Update the taicurl...
 
   ...on the board: blank out the current tail, and change the new
   tail from a body character (^<v>) into a tail character (wasd)
@@ -275,16 +274,16 @@ static void update_tail(game_state_t *state, unsigned int snum) {
   // TODO: Implement this function.
   snake_t* snake = &(state->snakes[snum]);
 
-  set_board_at(state, snake->tail_row, snake->tail_col,(state->board[snake->tail_row][snake->tail_col} == '*' ? '*' : ' '));
+  set_board_at(state, snake->tail_row, snake->tail_col,(state->board[snake->tail_row][snake->tail_col] == '*' ? '*' : ' '));
 
   // Moving tail position 
   snake->tail_row = get_next_row(snake->tail_row, body_to_tail(state->board[snake->tail_row][snake->tail_col]));
   snake->tail_col = get_next_col(snake->tail_col, body_to_tail(state->board[snake->tail_row][snake->tail_col]));
 
-// Updating board 
-set_board_at(state, snake->tail_row, snake->tail_col, body_to_tail(state->board[snake->tail_row][snake->tail_col]));
+  // Updating board 
+  set_board_at(state, snake->tail_row, snake->tail_col, body_to_tail(state->board[snake->tail_row][snake->tail_col]));
 
-set_board_at(state, snake->tail_row, snake->tail_col, body_to_tail(state->board[snake->tail_row][snake->tail_col]));
+  set_board_at(state, snake->tail_row, snake->tail_col, body_to_tail(state->board[snake->tail_row][snake->tail_col]));
 }
 
 /* Task 4.5 */
