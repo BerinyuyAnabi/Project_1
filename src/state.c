@@ -352,36 +352,93 @@ char *read_line(FILE *fp) {
 
 /* Task 5.2 */
 game_state_t *load_board(FILE *fp) {
-  // TODO: Implement this function.
+// TODO: Implement this function.
 char line[256];
-  game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
-  if (state == NULL) {
-        fprintf(stderr, "Failed to allocate memory for game state.\n");
-        return NULL;
-    }
+game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
+if (state == NULL) {
+      fprintf(stderr, "Failed to allocate memory for game state.\n");
+      return NULL;
+  }
 
   // Initializing state with default values before updating
   state->num_rows = 0; 
   state->board = NULL;
   state->snakes = NULL;
 
-  // Reading the board line by line
-  // char *line;
-  while (fgets(line, sizeof(line), fp) != NULL) {
-      if (state->board == NULL) {
-          state->num_rows = 10; // Initial guess; will resize as needed
-          state->board = (char**) malloc(state->num_rows * sizeof(char*));
-          if (state->board == NULL) {
-              fprintf(stderr, "Failed to allocate memory for board.\n");
-              free(state);
-              return NULL;
-          }
-          for (unsigned int i = 0; i < state->num_rows; i++) {
-              state->board[i] = NULL;
-          }
-      }
+  // Reading the board line by line 
+  state->num_rows = 10; // Example initial size; this might change
+    state->board = (char**) malloc(state->num_rows * sizeof(char*));
+    if (state->board == NULL) {
+        fprintf(stderr, "Failed to allocate memory for board.\n");
+        free(state);
+        return NULL;
+    }
+    for (unsigned int i = 0; i < state->num_rows; i++) {
+        state->board[i] = NULL;
+    }
+
+    // Read the board line by line
+    unsigned int row = 0;
+    // while (fgets(line, sizeof(line), fp) != NULL) {
+    //     if (state->board == NULL) {
+    //         state->num_rows = 10; // Initial guess; will resize as needed
+    //         state->board = (char**) malloc(state->num_rows * sizeof(char*));
+    //         if (state->board == NULL) {
+    //             fprintf(stderr, "Failed to allocate memory for board.\n");
+    //             free(state);
+    //             return NULL;
+    //         }
+    //         for (unsigned int i = 0; i < state->num_rows; i++) {
+    //             state->board[i] = NULL;
+    //         }
+    //     }
+    //   return state;
+
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        // Check if we need to expand the board
+        if (row >= state->num_rows) {
+            // Resize board if needed
+            unsigned int new_size = state->num_rows * 2;
+            char **new_board = (char**) realloc(state->board, new_size * sizeof(char*));
+            if (new_board == NULL) {
+                fprintf(stderr, "Failed to reallocate memory for board.\n");
+                // Clean up and exit
+                for (unsigned int i = 0; i < state->num_rows; i++) {
+                    free(state->board[i]);
+                }
+                free(state->board);
+                free(state);
+                return NULL;
+            }
+            state->board = new_board;
+            for (unsigned int i = state->num_rows; i < new_size; i++) {
+                state->board[i] = NULL;
+            }
+            state->num_rows = new_size;
+        }
+        // Allocate memory for the current row
+        state->board[row] = strdup(line);
+        if (state->board[row] == NULL) {
+            fprintf(stderr, "Failed to allocate memory for board row.\n");
+            // Clean up and exit
+            for (unsigned int i = 0; i < row; i++) {
+                free(state->board[i]);
+            }
+            free(state->board);
+            free(state);
+            return NULL;
+        }
+        row++;
+    }
+
+    // Cleanup in case the file was empty
+    if (row == 0) {
+        free(state->board);
+        state->board = NULL;
+        state->num_rows = 0;
+    }
+
     return state;
-  // return NULL;
 }
 
 /*
