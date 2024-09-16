@@ -2,7 +2,7 @@
 #include <string.h>
 #include "snake_utils.h"
 #include "state.h"
-
+#define _GNU_SOURCE
 
 int main(int argc, char *argv[]) {
   bool io_stdin = false;
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     fclose(in_file);
 
     // Intitialising snakes
-    initiialize_snakes(state);
+    initialize_snakes(state);
     
   } else if (io_stdin) {
     // TODO: Load the board from stdin
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
       return -1;
     }
     // Save board to the file
-    print_board(out_file, state);
+    print_board(state, out_file);
     fclose(out_file);
     return -1;
   } else {
