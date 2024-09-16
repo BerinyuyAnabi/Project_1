@@ -378,20 +378,7 @@ if (state == NULL) {
 
     // Read the board line by line
     unsigned int row = 0;
-    // while (fgets(line, sizeof(line), fp) != NULL) {
-    //     if (state->board == NULL) {
-    //         state->num_rows = 10; // Initial guess; will resize as needed
-    //         state->board = (char**) malloc(state->num_rows * sizeof(char*));
-    //         if (state->board == NULL) {
-    //             fprintf(stderr, "Failed to allocate memory for board.\n");
-    //             free(state);
-    //             return NULL;
-    //         }
-    //         for (unsigned int i = 0; i < state->num_rows; i++) {
-    //             state->board[i] = NULL;
-    //         }
-    //     }
-    //   return state;
+
 
     while (fgets(line, sizeof(line), fp) != NULL) {
     if (row >= state->num_rows) {
@@ -410,7 +397,7 @@ if (state == NULL) {
       state->num_rows = new_size;
     }
 
-    state->board[row] = strdup(line);
+    state->board[row] = strcmp(line);
     if (state->board[row] == NULL) {
       fprintf(stderr, "Failed to allocate memory for board row.\n");
       for (unsigned int i = 0; i < row; i++) {
