@@ -354,15 +354,31 @@ char *read_line(FILE *fp) {
 game_state_t *load_board(FILE *fp) {
   // TODO: Implement this function.
   game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
-
-    // Reading the board line by line
-    char *line;
-    unsigned int row = 0;
-    while ((line = read_line(fp)) != NULL) {
-        strcpy(state->board[row], line);
-        row++;
-        free(line);
+  if (state == NULL) {
+        fprintf(stderr, "Failed to allocate memory for game state.\n");
+        return NULL;
     }
+
+  // Initializing state with default values before updating
+  state->num_rows = 0; 
+  state->board = NULL;
+  state->snakes = NULL;
+
+  // Reading the board line by line
+  // char *line;
+  while (fgets(line, sizeof(line), fp) != NULL) {
+      if (state->board == NULL) {
+          state->num_rows = 10; // Initial guess; will resize as needed
+          state->board = (char**) malloc(state->num_rows * sizeof(char*));
+          if (state->board == NULL) {
+              fprintf(stderr, "Failed to allocate memory for board.\n");
+              free(state);
+              return NULL;
+          }
+          for (unsigned int i = 0; i < state->num_rows; i++) {
+              state->board[i] = NULL;
+          }
+      }
     return state;
   // return NULL;
 }
