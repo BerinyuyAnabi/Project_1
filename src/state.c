@@ -273,3 +273,77 @@ game_state_t *load_board(FILE *fp) {
 
     return state;
 }
+
+//Task 6.1
+
+  /* Helper function for initialize_snakes.
+  Given a snake struct with the tail row and col filled in,
+  trace through the board to find the head row and col, and
+  fill in the head row and col in the struct.
+*/
+static void find_head(game_state_t *state, unsigned int snum) {
+  // TODO: Implement this function
+  // Starting at the snake's tail
+  snake_t* snake = &(state->snakes[snum]);
+  unsigned int row = snake->tail_row;
+  unsigned int col = snake->tail_col;
+
+  // Keep moving in the direction of the body until we find the head
+  char c = get_board_at(state, row, col);
+
+  while (!is_head(c)) {
+  // Move to the next part of the snake based on the current body's direction
+  row = get_next_row(row, c);
+  col = get_next_col(col, c);
+  c = get_board_at(state, row, col);
+  }
+
+  // Set the head's row and col in the snake struct
+  snake->head_row = row;
+  snake->head_col = col;
+}
+
+/* Task 6.2 */
+game_state_t *initialize_snakes(game_state_t *state) {
+  // TODO: Implement this function.
+  if (state == NULL || state->board == NULL) {
+        return NULL;
+    }
+  
+  unsigned int snake_count = 0;
+  // First, count the number of snakes by finding all tail characters
+  for (unsigned int row = 0; row < state->num_rows; row++) {
+      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+          if (is_tail(get_board_at(state, row, col))) {
+              snake_count++;
+          }
+      }
+  }
+
+  // Allocate memory for all the snakes
+  state->num_snakes = snake_count;
+  state->snakes = (snake_t *) malloc(snake_count * sizeof(snake_t));
+  if (state->snakes == NULL) {
+        return NULL; // Handle allocation failure
+    }
+
+  // Now, initialize each snake by finding its tail and head
+  unsigned int snum = 0;
+  for (unsigned int row = 0; row < state->num_rows; row++) {
+      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+          if (is_tail(get_board_at(state, row, col))) {
+              // Initialize the snake with its tail position
+              state->snakes[snum].tail_row = row;
+              state->snakes[snum].tail_col = col;
+              // state->snakes[snum].live = true;
+
+              // Find and set the head position of the snake
+              find_head(state, snum);
+              snum++;
+          }
+      }
+  }
+  return state;
+  
+}
+
