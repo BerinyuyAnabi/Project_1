@@ -295,7 +295,7 @@ void update_state(game_state_t *state, int (*add_food)(game_state_t *state)) {
         
         if (next == ' ' || next == '*') {
             update_head(state, i);
-            update_tail(state, i); // If no food, update tail
+            if (next == ' ') update_tail(state, i); 
         }
         
         // Handle food
@@ -311,14 +311,12 @@ char *read_line(FILE *fp) {
   // TODO: Implement this function.
   char *line = NULL;
     size_t len = 0;
-    ssize_t read;
-
+    // ssize_t read;
     if ((read = getline(&line, &len, fp)) != -1) {
         return line;
     }
     free(line);
     return NULL;
-  return NULL;
 }
 
 /* Task 5.2 */
@@ -335,7 +333,7 @@ game_state_t *load_board(FILE *fp) {
         free(line);
     }
     return state;
-  return NULL;
+  // return NULL;
 }
 
 /*
@@ -394,11 +392,10 @@ game_state_t *initialize_snakes(game_state_t *state) {
                 // Initialize the snake with its tail position
                 state->snakes[snum].tail_row = row;
                 state->snakes[snum].tail_col = col;
-                state->snakes[snum].live = true;
+                // state->snakes[snum].live = true;
 
                 // Find and set the head position of the snake
                 find_head(state, snum);
-
                 snum++;
             }
         }
