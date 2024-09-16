@@ -309,10 +309,10 @@ void update_state(game_state_t *state, int (*add_food)(game_state_t *state)) {
 /* Task 5.1 */
 char *read_line(FILE *fp) {
   // TODO: Implement this function.
-  char *line = NULL;
-    size_t len = 0;
-    // ssize_t read;
-    if (getline(&line, &len, fp) != -1) {
+  char *line = (char*) malloc(1024* sizeof(char));
+    // size_t len = 0;
+    // // ssize_t read;
+    if (fgets(line, 1024, fp) != NULL) {
         return line;
     }
     free(line);
