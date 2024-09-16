@@ -54,6 +54,10 @@ int main(int argc, char *argv[]) {
     state = load_board(in_file);
     // TODO: close file pointer
     fclose(in_file);
+
+    // Intitialising snakes
+    initiialize_snakes(state);
+    
   } else if (io_stdin) {
     // TODO: Load the board from stdin
     state = load_board(stdin);
@@ -71,13 +75,19 @@ int main(int argc, char *argv[]) {
   // Write updated board to file or stdout
   if (out_filename != NULL) {
     // TODO: Save the board to out_filename
+    FILE *out_file = fopen(out_filename, "w");
+    if (out_file == NULL) {
+      fprintf(stderr, "Error: Failed to open output file '%s'.\n", out_filename);
+      free_state(state);
+      return -1;
+    }
     // Save board to the file
     print_board(out_file, state);
     fclose(out_file);
     return -1;
   } else {
     // TODO: Print the board to stdout
-    print_board(stdout, state);
+    print_board(state, stdout);
   }
 
   // TODO: Free the state
