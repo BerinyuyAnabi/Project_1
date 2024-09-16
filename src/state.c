@@ -91,6 +91,29 @@ game_state_t *create_default_state() {
 
     return state;
 }
+/* Task 2*/
+void free_state(game_state_t* state) {
+    if (state == NULL) {
+        return;
+    }
+
+    // Freeing each row of the board
+    for (int i = 0; i < state->num_rows; i++) {
+        free(state->board[i]);
+    }
+    // Freeing the board itself
+    free(state->board);
+
+    // Freeing each snake
+    for (int i = 0; i < state->num_snakes; i++) {
+        free(state->snakes[i]);
+    }
+    // Freeing the array of snakes
+    free(state->snakes);
+
+    // freeing the state
+    free(state);
+}
 
 /* Task 3 */
 void print_board(game_state_t *state, FILE *fp) {
