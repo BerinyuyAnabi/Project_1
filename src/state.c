@@ -465,34 +465,41 @@ static void find_head(game_state_t *state, unsigned int snum) {
 game_state_t *initialize_snakes(game_state_t *state) {
   // TODO: Implement this function.
   if (state == NULL || state->board == NULL) {
-    return NULL;
-  }
-
-  unsigned int snake_count = 0;
-  for (unsigned int row = 0; row < state->num_rows; row++) {
-    for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
-      if (is_tail(get_board_at(state, row, col))) {
-        snake_count++;
-      }
+        return NULL;
     }
+  
+  unsigned int snake_count = 0;
+  // First, count the number of snakes by finding all tail characters
+  for (unsigned int row = 0; row < state->num_rows; row++) {
+      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+          if (is_tail(get_board_at(state, row, col))) {
+              snake_count++;
+          }
+      }
   }
 
+  // Allocate memory for all the snakes
   state->num_snakes = snake_count;
   state->snakes = (snake_t *) malloc(snake_count * sizeof(snake_t));
   if (state->snakes == NULL) {
-    return NULL;
-  }
+        return NULL; // Handle allocation failure
+    }
 
+  // Now, initialize each snake by finding its tail and head
   unsigned int snum = 0;
   for (unsigned int row = 0; row < state->num_rows; row++) {
-    for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
-      if (is_tail(get_board_at(state, row, col))) {
-        state->snakes[snum].tail_row = row;
-        state->snakes[snum].tail_col = col;
-        find_head(state, snum);
-        snum++;
+      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+          if (is_tail(get_board_at(state, row, col))) {
+              // Initialize the snake with its tail position
+              state->snakes[snum].tail_row = row;
+              state->snakes[snum].tail_col = col;
+              // state->snakes[snum].live = true;
+
+              // Find and set the head position of the snake
+              find_head(state, snum);
+              snum++;
+          }
       }
-    }
   }
   return state;
   
