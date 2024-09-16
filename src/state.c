@@ -21,61 +21,37 @@ static void update_head(game_state_t *state, unsigned int snum);
 
 /* Task 1 */
 game_state_t *create_default_state() {
-  // TODO: Implement this function.
-  // Allocating memory for game state
-  game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
-  if (state == NULL){
-    fprintf(stderr, "Failed to allocate memory for game state.\n");
-    return NULL;
-  }
+  game_state_t *state = malloc(sizeof(game_state_t));
+    state->num_rows = 18;
+    state->num_cols = 20;
+    state->board = malloc(state->num_rows * sizeof(char *));
+    for (int i = 0; i < state->num_rows; i++) {
+        state->board[i] = malloc(state->num_cols + 1); // +1 for null terminator
+        memset(state->board[i], ' ', state->num_cols);
+        state->board[i][state->num_cols] = '\0';
+    }
     
-  // Initializing the board's rows and columns
-  state->num_rows = 18;
-  state->board = (char**) malloc(state->num_rows * sizeof(char*));
-  if (state->board == NULL) {
-      fprintf(stderr, "Failed to allocate memory for board.\n");
-      free(state);
-      return NULL;
+    // Set the walls
+    memset(state->board[0], '#', state->num_cols);
+    memset(state->board[17], '#', state->num_cols);
+    for (int i = 1; i < 17; i++) {
+        state->board[i][0] = '#';
+        state->board[i][19] = '#';
     }
 
-  for(int i = 0; i< state->num_rows; i++){
-     state->board[i] = (char*) malloc(21 * sizeof(char));
-      if (state->board[i] == NULL) {
-            fprintf(stderr, "Failed to allocate memory for board row.\n");
-            for (int j = 0; j < i; j++) {
-                free(state->board[j]);
-            }
-            free(state->board);
-            free(state);
-            return NULL;
-        }
+    // Place snake and fruit
+    strcpy(state->board[2], "# d>D    *        #");
 
-      // Setting borders for the walls and spaces 
-      strcpy(state->board[i], "####################");
-  }
-  // Placing the snake and fruit on the board 
-  strcpy(state->board[2], "# d>D    *          #");
-
-  // Initialising the first snake as an array 
-  state->num_snakes = 1;
-  state->snakes = (snake_t*) malloc(sizeof(snake_t));
-  if (state->snakes == NULL) {
-        fprintf(stderr, "Failed to allocate memory for snakes.\n");
-        for (int i = 0; i < state->num_rows; i++) {
-            free(state->board[i]);
-        }
-        free(state->board);
-        free(state);
-        return NULL;
-  }
-  // Creating the tail and head positions 
-  state->snakes[0].tail_row = 2;
-  state->snakes[0].tail_col = 2;
-  state->snakes[0].head_row = 2;
-  state->snakes[0].head_col = 4;
-  state->snakes[0].live = true;
-
-  return state;
+    // Allocate snake
+    state->num_snakes = 1;
+    state->snakes = malloc(sizeof(snake_t));
+    state->snakes[0].tail_row = 2;
+    state->snakes[0].tail_col = 2;
+    state->snakes[0].head_row = 2;
+    state->snakes[0].head_col = 4;
+    state->snakes[0].live = true;
+    
+    return state;
 }
 
 /* Task 2 */
