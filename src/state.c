@@ -19,14 +19,31 @@ static char next_square(game_state_t *state, unsigned int snum);
 static void update_tail(game_state_t *state, unsigned int snum);
 static void update_head(game_state_t *state, unsigned int snum);
 
+#define NUM_ROWS 18
+#define NUM_COLS 20
+
 /* Task 1 */
 game_state_t *create_default_state() {
   // TODO: Implement this function.
   // Allocating memory for game state
-  game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
+  // Allocate memory for the game state
+    game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
+    if (state == NULL) {
+        // Handle memory allocation failure
+        return NULL;
+    }
 
-    // Initialize the board
-    char default_board[18][20] = {
+    // Set number of rows and allocate memory for the board
+    state->num_rows = NUM_ROWS;
+    state->board = (char**) malloc(NUM_ROWS * sizeof(char*));
+    if (state->board == NULL) {
+        // Handle memory allocation failure
+        free(state);
+        return NULL;
+    }
+
+    // Define the default board layout
+    char* default_board[NUM_ROWS] = {
         "####################",
         "#                  #",
         "# d>D    *         #",
@@ -48,20 +65,41 @@ game_state_t *create_default_state() {
     };
 
     // Copy the default board to the state's board
-    for (int i = 0; i < 18; ++i) {
+    for (unsigned int i = 0; i < NUM_ROWS; ++i) {
+        state->board[i] = (char*) malloc((NUM_COLS + 1) * sizeof(char));  // +1 for null terminator
+        if (state->board[i] == NULL) {
+            // Handle memory allocation failure and free previously allocated memory
+            for (unsigned int j = 0; j < i; ++j) {
+                free(state->board[j]);
+            }
+            free(state->board);
+            free(state);
+            return NULL;
+        }
         strcpy(state->board[i], default_board[i]);
     }
 
-    // Set initial positions (row and column indices are zero-indexed)
-    state->fruit_row = 2;
-    state->fruit_col = 9;
-    state->tail_row = 2;
-    state->tail_col = 2;
-    state->head_row = 2;
-    state->head_col = 4;
+    // Set the number of snakes
+    state->num_snakes = 1;  // Adjust as needed based on your default state
+    state->snakes = (snake_t*) malloc(state->num_snakes * sizeof(snake_t));
+    if (state->snakes == NULL) {
+        // Handle memory allocation failure and free previously allocated memory
+        for (unsigned int i = 0; i < NUM_ROWS; ++i) {
+            free(state->board[i]);
+        }
+        free(state->board);
+        free(state);
+        return NULL;
+    }
+
+    // Initialize snake details (example with one snake)
+    state->snakes[0].tail_row = 2;
+    state->snakes[0].tail_col = 2;
+    state->snakes[0].head_row = 2;
+    state->snakes[0].head_col = 4;
+    state->snakes[0].live = true;
 
     return state;
-
 }
 
 /* Task 3 */
