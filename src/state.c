@@ -104,10 +104,10 @@ void free_state(game_state_t* state) {
     // Freeing the board itself
     free(state->board);
 
-    // Freeing each snake
-    for (int i = 0; i < state->num_snakes; i++) {
-        free(state->snakes[i]);
-    }
+    // // Freeing each snake
+    // for (int i = 0; i < state->num_snakes; i++) {
+    //     free(state->snakes[i]);
+    // }
     // Freeing the array of snakes
     free(state->snakes);
 
@@ -183,6 +183,7 @@ static unsigned int get_next_col(unsigned int cur_col, char c) {
     return cur_col;
 }
 
+/* Task 4.2 */
 static char next_square(game_state_t *state, unsigned int snum) {
     snake_t* snake = &(state->snakes[snum]);
     unsigned int next_row = get_next_row(snake->head_row, state->board[snake->head_row][snake->head_col]);
@@ -190,6 +191,7 @@ static char next_square(game_state_t *state, unsigned int snum) {
     return get_board_at(state, next_row, next_col);
 }
 
+/* Task 4.3 */
 static void update_head(game_state_t *state, unsigned int snum) {
     snake_t* snake = &(state->snakes[snum]);
     unsigned int next_row = get_next_row(snake->head_row, state->board[snake->head_row][snake->head_col]);
@@ -203,6 +205,7 @@ static void update_head(game_state_t *state, unsigned int snum) {
     set_board_at(state, next_row, next_col, state->board[snake->head_row][snake->head_col]);
 }
 
+/* Task 4.4 */
 static void update_tail(game_state_t *state, unsigned int snum) {
     snake_t* snake = &(state->snakes[snum]);
 
@@ -217,6 +220,7 @@ static void update_tail(game_state_t *state, unsigned int snum) {
     set_board_at(state, new_tail_row, new_tail_col, body_to_tail(state->board[new_tail_row][new_tail_col]));
 }
 
+/* Task 4.5 */
 void update_state(game_state_t *state, int (*add_food)(game_state_t *state)) {
     for (unsigned int i = 0; i < state->num_snakes; i++) {
         char next = next_square(state, i);
