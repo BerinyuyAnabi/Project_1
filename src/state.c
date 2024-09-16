@@ -1,10 +1,8 @@
 #include "state.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "snake_utils.h"
 
 /* Helper function definitions */
@@ -35,13 +33,13 @@ game_state_t *create_default_state() {
   state->num_rows = 18;
   state->board = (char**) malloc(state->num_rows * sizeof(char*));
   if (state->board == NULL) {
-        fprintf(stderr, "Failed to allocate memory for board.\n");
-        free(state);
-        return NULL;
+      fprintf(stderr, "Failed to allocate memory for board.\n");
+      free(state);
+      return NULL;
     }
 
   for(int i = 0; i< state->num_rows; i++){
-      state->board[i] = (char*) malloc(21 * sizeof(char));
+     state->board[i] = (char*) malloc(21 * sizeof(char));
       if (state->board[i] == NULL) {
             fprintf(stderr, "Failed to allocate memory for board row.\n");
             for (int j = 0; j < i; j++) {
@@ -360,10 +358,10 @@ if (state == NULL) {
       return NULL;
   }
 
-  // Initializing state with default values before updating
-  state->num_rows = 0; 
-  state->board = NULL;
-  state->snakes = NULL;
+  // // Initializing state with default values before updating
+  // state->num_rows = 0; 
+  // state->board = NULL;
+  // state->snakes = NULL;
 
   // Reading the board line by line 
   state->num_rows = 10; // Example initial size; this might change
@@ -395,50 +393,42 @@ if (state == NULL) {
     //   return state;
 
     while (fgets(line, sizeof(line), fp) != NULL) {
-        // Check if we need to expand the board
-        if (row >= state->num_rows) {
-            // Resize board if needed
-            unsigned int new_size = state->num_rows * 2;
-            char **new_board = (char**) realloc(state->board, new_size * sizeof(char*));
-            if (new_board == NULL) {
-                fprintf(stderr, "Failed to reallocate memory for board.\n");
-                // Clean up and exit
-                for (unsigned int i = 0; i < state->num_rows; i++) {
-                    free(state->board[i]);
-                }
-                free(state->board);
-                free(state);
-                return NULL;
-            }
-            state->board = new_board;
-            for (unsigned int i = state->num_rows; i < new_size; i++) {
-                state->board[i] = NULL;
-            }
-            state->num_rows = new_size;
+    if (row >= state->num_rows) {
+      unsigned int new_size = state->num_rows * 2;
+      char **new_board = (char**) realloc(state->board, new_size * sizeof(char*));
+      if (new_board == NULL) {
+        fprintf(stderr, "Failed to reallocate memory for board.\n");
+        for (unsigned int i = 0; i < state->num_rows; i++) {
+          free(state->board[i]);
         }
-        // Allocate memory for the current row
-        state->board[row] = strdup(line);
-        if (state->board[row] == NULL) {
-            fprintf(stderr, "Failed to allocate memory for board row.\n");
-            // Clean up and exit
-            for (unsigned int i = 0; i < row; i++) {
-                free(state->board[i]);
-            }
-            free(state->board);
-            free(state);
-            return NULL;
-        }
-        row++;
-    }
-
-    // Cleanup in case the file was empty
-    if (row == 0) {
         free(state->board);
-        state->board = NULL;
-        state->num_rows = 0;
+        free(state);
+        return NULL;
+      }
+      state->board = new_board;
+      state->num_rows = new_size;
     }
 
-    return state;
+    state->board[row] = strdup(line);
+    if (state->board[row] == NULL) {
+      fprintf(stderr, "Failed to allocate memory for board row.\n");
+      for (unsigned int i = 0; i < row; i++) {
+        free(state->board[i]);
+      }
+      free(state->board);
+      free(state);
+      return NULL;
+    }
+    row++;
+  }
+
+  if (row == 0) {
+    free(state->board);
+    free(state);
+    return NULL;
+  }
+
+  return state;
 }
 
 /*
@@ -475,41 +465,34 @@ static void find_head(game_state_t *state, unsigned int snum) {
 game_state_t *initialize_snakes(game_state_t *state) {
   // TODO: Implement this function.
   if (state == NULL || state->board == NULL) {
-        return NULL;
-    }
-  
-  unsigned int snake_count = 0;
-  // First, count the number of snakes by finding all tail characters
-  for (unsigned int row = 0; row < state->num_rows; row++) {
-      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
-          if (is_tail(get_board_at(state, row, col))) {
-              snake_count++;
-          }
-      }
+    return NULL;
   }
 
-  // Allocate memory for all the snakes
+  unsigned int snake_count = 0;
+  for (unsigned int row = 0; row < state->num_rows; row++) {
+    for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+      if (is_tail(get_board_at(state, row, col))) {
+        snake_count++;
+      }
+    }
+  }
+
   state->num_snakes = snake_count;
   state->snakes = (snake_t *) malloc(snake_count * sizeof(snake_t));
   if (state->snakes == NULL) {
-        return NULL; // Handle allocation failure
-    }
+    return NULL;
+  }
 
-  // Now, initialize each snake by finding its tail and head
   unsigned int snum = 0;
   for (unsigned int row = 0; row < state->num_rows; row++) {
-      for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
-          if (is_tail(get_board_at(state, row, col))) {
-              // Initialize the snake with its tail position
-              state->snakes[snum].tail_row = row;
-              state->snakes[snum].tail_col = col;
-              // state->snakes[snum].live = true;
-
-              // Find and set the head position of the snake
-              find_head(state, snum);
-              snum++;
-          }
+    for (unsigned int col = 0; col < strlen(state->board[row]); col++) {
+      if (is_tail(get_board_at(state, row, col))) {
+        state->snakes[snum].tail_row = row;
+        state->snakes[snum].tail_col = col;
+        find_head(state, snum);
+        snum++;
       }
+    }
   }
   return state;
   
