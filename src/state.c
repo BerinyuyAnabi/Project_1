@@ -312,7 +312,7 @@ char *read_line(FILE *fp) {
   char *line = NULL;
     size_t len = 0;
     // ssize_t read;
-    if ((getline(&line, &len, fp) != -1) {
+    if (getline(&line, &len, fp) != -1) {
         return line;
     }
     free(line);
