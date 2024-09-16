@@ -353,6 +353,7 @@ char *read_line(FILE *fp) {
 /* Task 5.2 */
 game_state_t *load_board(FILE *fp) {
   // TODO: Implement this function.
+char line[256];
   game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
   if (state == NULL) {
         fprintf(stderr, "Failed to allocate memory for game state.\n");
