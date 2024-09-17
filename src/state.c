@@ -266,16 +266,21 @@ char *read_line(FILE *fp) {
 game_state_t *load_board(FILE *fp) {
     char line[LINE_SIZE];
     game_state_t* state = (game_state_t*) malloc(sizeof(game_state_t));
-    if (state == NULL) return NULL;
+    if (state == NULL) {
+        printf("Memory allocation for game_state_t failed.\n");
+        return NULL;
+    }
 
     state->board = (char**) malloc(NUM_ROWS * sizeof(char*));
     if (state->board == NULL) {
+        printf("Memory allocation for board rows failed.\n");
         free(state);
         return NULL;
     }
 
     for (unsigned int i = 0; i < NUM_ROWS; i++) {
         if (fgets(line, LINE_SIZE, fp) == NULL) {
+            printf("Failed to read line %u from file.\n", i);
             for (unsigned int j = 0; j < i; j++) {
                 free(state->board[j]);
             }
@@ -283,9 +288,11 @@ game_state_t *load_board(FILE *fp) {
             free(state);
             return NULL;
         }
+        printf("Read line: %s", line);
 
         state->board[i] = (char*) malloc((NUM_COLS + 1) * sizeof(char));
         if (state->board[i] == NULL) {
+            printf("Memory allocation for board row %u failed.\n", i);
             for (unsigned int j = 0; j < i; j++) {
                 free(state->board[j]);
             }
@@ -299,6 +306,7 @@ game_state_t *load_board(FILE *fp) {
     state->num_snakes = 1;
     state->snakes = (snake_t*) malloc(state->num_snakes * sizeof(snake_t));
     if (state->snakes == NULL) {
+        printf("Memory allocation for snakes failed.\n");
         for (unsigned int i = 0; i < NUM_ROWS; i++) {
             free(state->board[i]);
         }
