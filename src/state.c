@@ -194,15 +194,30 @@ static char next_square(game_state_t *state, unsigned int snum) {
 /* Task 4.3 */
 static void update_head(game_state_t *state, unsigned int snum) {
     snake_t* snake = &(state->snakes[snum]);
+    
+    // Print board before update
+    printf("Board before update:\n");
+    print_board(state);
+    
     unsigned int next_row = get_next_row(snake->head_row, state->board[snake->head_row][snake->head_col]);
     unsigned int next_col = get_next_col(snake->head_col, state->board[snake->head_row][snake->head_col]);
 
-    set_board_at(state, snake->head_row, snake->head_col, head_to_body(state->board[snake->head_row][snake->head_col]));
+    // Store the previous head value before moving
+    char prev_head_value = state->board[snake->head_row][snake->head_col];
+    
+    // Update the current head position to body
+    set_board_at(state, snake->head_row, snake->head_col, head_to_body(prev_head_value));
 
+    // Move the head
     snake->head_row = next_row;
     snake->head_col = next_col;
 
-    set_board_at(state, next_row, next_col, state->board[snake->head_row][snake->head_col]);
+    // Update the new head position
+    set_board_at(state, next_row, next_col, prev_head_value);
+    
+    // Print board after update
+    printf("Board after update:\n");
+    print_board(state);
 }
 
 /* Task 4.4 */
