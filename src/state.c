@@ -194,11 +194,11 @@ static char next_square(game_state_t *state, unsigned int snum) {
 /* Task 4.3 */
 static void update_head(game_state_t *state, unsigned int snum) {
     snake_t* snake = &(state->snakes[snum]);
-    
+
     // Print board before update
     printf("Board before update:\n");
-    print_board(state);
-    
+    print_board(state, stdout);  // Print to standard output
+
     unsigned int next_row = get_next_row(snake->head_row, state->board[snake->head_row][snake->head_col]);
     unsigned int next_col = get_next_col(snake->head_col, state->board[snake->head_row][snake->head_col]);
 
@@ -217,7 +217,7 @@ static void update_head(game_state_t *state, unsigned int snum) {
     
     // Print board after update
     printf("Board after update:\n");
-    print_board(state);
+    print_board(state, stdout);
 }
 
 /* Task 4.4 */
