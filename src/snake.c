@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   // Do not modify anything above this line.
 
   /* Task 7 */
-
+    game_state_t *state = NULL;
    // Read board from file, or create default board
     if (in_filename != NULL) {
         FILE *in_file = fopen(in_filename, "r");
